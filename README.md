@@ -6,13 +6,14 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 - **nvim** — Neovim config based on LazyVim (see [`nvim/.config/nvim/README.md`](nvim/.config/nvim/README.md))
 - **tmux** — `C-a` prefix, vi-style copy mode with `pbcopy`, plugins managed by [TPM](https://github.com/tmux-plugins/tpm)
+- **ghostty** — Ghostty terminal config (tokyonight-night theme, transparent background with blur)
 
 ## Install
 
 ```sh
 git clone https://github.com/AndyWang-505/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow nvim tmux
+stow nvim tmux ghostty
 ```
 
 Each package mirrors the target layout under `$HOME`, so `stow nvim` symlinks `nvim/.config/nvim/` → `~/.config/nvim/`.

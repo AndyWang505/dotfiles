@@ -1,0 +1,5 @@
+theme = tokyonight-night
+
+window-decoration = false
+background-opacity = 0.85
+background-blur-radius = 20
