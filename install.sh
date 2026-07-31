@@ -124,10 +124,36 @@ fi
 log "Installing fish plugins from fish_plugins"
 try fish -c 'fisher update'
 
+# ---------------------------------------------------------------------- node --
+# The Brewfile installs nvm, which ships no Node version of its own. Without one
+# mason cannot install the npm-backed tooling the typescript, eslint and prettier
+# extras rely on.
+if [ -d "$HOME/.nvm/versions/node" ]; then
+  skip "Node already installed"
+else
+  log "Installing the LTS Node version"
+  try bash -c 'export NVM_DIR="$HOME/.nvm"; mkdir -p "$NVM_DIR"; . "$(brew --prefix nvm)/nvm.sh"; nvm install --lts'
+fi
+
 # ---------------------------------------------------------------------- nvim --
-# restore, not sync: install at the commits pinned in lazy-lock.json
+LOCKFILE="$DOTFILES_DIR/nvim/.config/nvim/lazy-lock.json"
+
+# On a machine with no plugins yet, lazy.nvim clones with --filter=blob:none
+# --single-branch, which leaves the pinned commit unreachable: it checks out HEAD
+# instead and then rewrites lazy-lock.json with what it actually got. Restoring
+# the lockfile and running again applies the pins for real, now that the repos
+# exist. Only done when we are the ones who dirtied it.
+lock_was_clean=false
+git -C "$DOTFILES_DIR" diff --quiet -- "$LOCKFILE" && lock_was_clean=true
+
 log "Installing Neovim plugins"
 try nvim --headless "+Lazy! restore" +qa
+
+if [ "$lock_was_clean" = true ] && ! git -C "$DOTFILES_DIR" diff --quiet -- "$LOCKFILE"; then
+  log "Re-applying the pinned plugin versions"
+  git -C "$DOTFILES_DIR" checkout -- "$LOCKFILE"
+  try nvim --headless "+Lazy! restore" +qa
+fi
 
 # --------------------------------------------------------------------- done ---
 log "Done"
