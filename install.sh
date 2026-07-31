@@ -91,18 +91,6 @@ fi
 log "Stowing packages: ${PACKAGES[*]}"
 stow --dir="$DOTFILES_DIR" --target="$HOME" --restow "${PACKAGES[@]}"
 
-# --------------------------------------------------------------- oh-my-zsh ---
-# After stow on purpose: KEEP_ZSHRC only takes effect when ~/.zshrc already
-# exists, so running this first would have the installer drop its own template
-# there and leave a pointless .zshrc.pre-dotfiles behind.
-if [ -d "$HOME/.oh-my-zsh" ]; then
-  skip "oh-my-zsh already installed"
-else
-  log "Installing oh-my-zsh"
-  RUNZSH=no KEEP_ZSHRC=yes sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
-
 # ---------------------------------------------------------------------- tmux --
 # TPM has to exist before `prefix + I` does anything.
 TPM_DIR="$HOME/.config/tmux/plugins/tpm"
@@ -183,8 +171,9 @@ fi
 cat <<EOF
 
 Left for you to do by hand:
-  - Put your real values in ~/.zshrc.local and ~/.gitconfig.local
-  - To make fish the login shell:
+  - Put your real values in ~/.gitconfig, ~/.zshrc.local and
+    ~/.config/fish/config-local.fish
+  - ghostty runs fish already. Only chsh if you also want it as the login shell:
       echo \$(brew --prefix)/bin/fish | sudo tee -a /etc/shells
       chsh -s \$(brew --prefix)/bin/fish
 EOF

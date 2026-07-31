@@ -1,3 +1,7 @@
+# Gets fish without chsh'ing the login shell, so scripts and anything reading
+# /etc/passwd keep getting zsh
+command = /opt/homebrew/bin/fish
+
 theme = TokyoNight Night
 
 font-family = JetBrainsMono Nerd Font
