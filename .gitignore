@@ -1,7 +1,7 @@
 .DS_Store
 *.swp
 *.swo
-.claude/settings.local.json
+**/.claude/
 
 # stow folds a package's directory into a single symlink, so anything a plugin
 # manager writes under it lands inside this repo.
@@ -12,4 +12,8 @@ fish/.config/fish/themes/
 fish/.config/fish/conf.d/_tide_init.fish
 fish/.config/fish/fish_variables*
 fish/.config/fish/config-local.fish
-nvim/.config/nvim/.claude/
+
+# Config that only makes sense inside one employer's repos.
+nvim/.config/nvim/lua/config/local.lua
+nvim/.config/nvim/lua/plugins/local/*
+!nvim/.config/nvim/lua/plugins/local/.gitkeep
