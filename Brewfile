@@ -22,8 +22,5 @@ brew "lazygit"
 brew "nvm"
 brew "pnpm"
 
-# PHP dependency manager; .zshrc puts ~/.composer/vendor/bin on PATH
-brew "composer"
-
 cask "ghostty"
 cask "font-jetbrains-mono-nerd-font"

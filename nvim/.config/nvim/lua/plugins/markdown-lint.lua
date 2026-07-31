@@ -2,7 +2,6 @@ return {
   "mfussenegger/nvim-lint",
   opts = function(_, opts)
     opts.linters_by_ft = opts.linters_by_ft or {}
-    -- Disable markdownlint-cli2 diagnostics on markdown files
     opts.linters_by_ft.markdown = {}
     opts.linters_by_ft["markdown.mdx"] = {}
     return opts
