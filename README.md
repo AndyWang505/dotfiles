@@ -22,5 +22,8 @@ Each package mirrors the target layout under `$HOME`, so `stow nvim` symlinks `n
 
 - GNU Stow
 - Neovim ≥ 0.10
+- [fzf](https://github.com/junegunn/fzf) > 0.36 — engine behind the fzf-lua picker
+- [ripgrep](https://github.com/BurntSushi/ripgrep) — required by the grep pickers
+- [fd](https://github.com/sharkdp/fd) — optional, used for file listing when present
 - A Nerd Font (config assumes JetBrainsMono NF)
 - tmux ≥ 3.0; on first launch hit `prefix + I` to install TPM plugins
