@@ -1,4 +1,3 @@
-abbr --add gco git checkout
 abbr --add gl git pull
 abbr --add gst git status
 abbr --add nx pnpm nx
