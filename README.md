@@ -53,9 +53,10 @@ Everything is in the [`Brewfile`](Brewfile) and installed by `install.sh`. Liste
 
 - GNU Stow, git
 - Neovim ≥ 0.10, plus [fzf](https://github.com/junegunn/fzf) > 0.36, [ripgrep](https://github.com/BurntSushi/ripgrep) and [fd](https://github.com/sharkdp/fd) for its pickers
-- tmux ≥ 3.0
+- tmux ≥ 3.2 (`terminal-features` is used to declare truecolor)
 - fish
 - JetBrainsMono Nerd Font, Ghostty
+- gh, pnpm, composer — referenced by the zsh config and the day-to-day workflow
 
 ## Machine-local files
 
@@ -65,3 +66,4 @@ Two files are deliberately untracked, because this repo is public:
 |---|---|
 | `~/.zshrc.local` | credentials and work-only environment (sourced at the end of `.zshrc`) |
 | `~/.gitconfig.local` | `user.name` / `user.email` (pulled in via `[include]`) |
+| `~/.config/fish/config-local.fish` | the same escape hatch for fish, sourced at the end of `config.fish` |
