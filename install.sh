@@ -8,7 +8,7 @@ if [ "$(uname)" != Darwin ]; then
 fi
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(zsh git nvim tmux ghostty fish)
+PACKAGES=(zsh nvim tmux ghostty fish)
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 skip() { printf '    %s\n' "$*"; }
@@ -51,21 +51,25 @@ else
 EOF
 fi
 
-if [ -f "$HOME/.gitconfig.local" ]; then
-  skip "~/.gitconfig.local exists"
+# git config is per-machine (identity, and URL rewrites that exist only because a
+# given work repo cannot be cloned over SSH here), so the repo ships none of it.
+if [ -f "$HOME/.gitconfig" ]; then
+  skip "~/.gitconfig exists"
 else
-  log "Creating ~/.gitconfig.local"
-  cat >"$HOME/.gitconfig.local" <<'EOF'
-# Machine-local git identity. Not tracked by the dotfiles repo.
+  log "Creating ~/.gitconfig"
+  cat >"$HOME/.gitconfig" <<'EOF'
+# Machine-local. Not tracked by the dotfiles repo.
 [user]
 	name = your-name
 	email = you@example.com
+[alias]
+	co = checkout
 EOF
 fi
 
 # --------------------------------------------------------------------- stow --
 # stow refuses to overwrite regular files, so move anything pre-existing aside.
-for file in .zshrc .zprofile .gitconfig; do
+for file in .zshrc .zprofile; do
   target="$HOME/$file"
   if [ -f "$target" ] && [ ! -L "$target" ]; then
     log "Backing up $target -> $target.pre-dotfiles"
