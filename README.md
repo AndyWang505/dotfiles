@@ -24,9 +24,9 @@ cd ~/dotfiles
 `install.sh` is idempotent — re-run it any time. It will:
 
 1. install Homebrew if missing, then everything in [`Brewfile`](Brewfile)
-2. install oh-my-zsh (with `KEEP_ZSHRC=yes`, so it leaves the stowed `.zshrc` alone)
-3. create `~/.zshrc.local` and `~/.gitconfig.local` stubs for values that must not be committed
-4. move any pre-existing `.zshrc` / `.zprofile` / `.gitconfig` to `*.pre-dotfiles`, then stow every package
+2. create `~/.zshrc.local` and `~/.gitconfig.local` stubs for values that must not be committed
+3. move any pre-existing `.zshrc` / `.zprofile` / `.gitconfig` to `*.pre-dotfiles`, then stow every package
+4. install oh-my-zsh — after stow, so `KEEP_ZSHRC=yes` sees the symlink and leaves it alone
 5. clone TPM and install the tmux plugins
 6. bootstrap Fisher and install the fish plugins
 7. run `nvim --headless "+Lazy! restore"`, which installs plugins at the commits pinned in `lazy-lock.json`
@@ -56,7 +56,7 @@ Everything is in the [`Brewfile`](Brewfile) and installed by `install.sh`. Liste
 - tmux ≥ 3.2 (`terminal-features` is used to declare truecolor)
 - fish
 - JetBrainsMono Nerd Font, Ghostty
-- gh, pnpm, composer — referenced by the zsh config and the day-to-day workflow
+- gh, pnpm — referenced by the zsh config and the day-to-day workflow
 
 ## Machine-local files
 
