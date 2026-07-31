@@ -128,6 +128,19 @@ fi
 log "Installing fish plugins from fish_plugins"
 try fish -c 'fisher update'
 
+# Written after stow so the stowed config.fish is already in place to source it.
+FISH_LOCAL="$HOME/.config/fish/config-local.fish"
+if [ -f "$FISH_LOCAL" ]; then
+  skip "$FISH_LOCAL exists"
+else
+  log "Creating $FISH_LOCAL"
+  cat >"$FISH_LOCAL" <<'EOF'
+# Machine-local fish config. Not tracked by the dotfiles repo.
+# set -gx JIRA_USER_EMAIL you@example.com
+# set -gx JIRA_API_TOKEN (security find-generic-password -a $USER -s jira_api_token -w)
+EOF
+fi
+
 # ---------------------------------------------------------------------- node --
 # The Brewfile installs nvm, which ships no Node version of its own. Without one
 # mason cannot install the npm-backed tooling the typescript, eslint and prettier
