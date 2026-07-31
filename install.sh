@@ -73,6 +73,17 @@ for file in .zshrc .zprofile .gitconfig; do
   fi
 done
 
+# Simulate first: stow's own failure output is hard to act on mid-script.
+if ! conflicts=$(stow --dir="$DOTFILES_DIR" --target="$HOME" --no --restow "${PACKAGES[@]}" 2>&1); then
+  printf '%s\n' "$conflicts" >&2
+  cat >&2 <<'EOF'
+
+Files already exist where stow wants to put symlinks (see above). Move or delete
+them, then re-run this script.
+EOF
+  exit 1
+fi
+
 log "Stowing packages: ${PACKAGES[*]}"
 stow --dir="$DOTFILES_DIR" --target="$HOME" --restow "${PACKAGES[@]}"
 
@@ -112,7 +123,6 @@ cat <<EOF
 
 Left for you to do by hand:
   - Put your real values in ~/.zshrc.local and ~/.gitconfig.local
-  - Set Ghostty's font to JetBrainsMono Nerd Font if it did not pick it up
   - To make fish the login shell:
       echo \$(brew --prefix)/bin/fish | sudo tee -a /etc/shells
       chsh -s \$(brew --prefix)/bin/fish
