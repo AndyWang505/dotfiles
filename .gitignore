@@ -2,3 +2,14 @@
 *.swp
 *.swo
 .claude/settings.local.json
+
+# stow folds a package's directory into a single symlink, so anything a plugin
+# manager writes under it lands inside this repo.
+tmux/.config/tmux/plugins/
+fish/.config/fish/completions/
+fish/.config/fish/functions/
+fish/.config/fish/themes/
+fish/.config/fish/conf.d/_tide_init.fish
+fish/.config/fish/fish_variables
+fish/.config/fish/config-local.fish
+nvim/.config/nvim/.claude/

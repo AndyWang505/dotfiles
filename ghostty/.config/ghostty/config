@@ -1,4 +1,7 @@
-theme = tokyonight-night
+theme = TokyoNight Night
+
+font-family = JetBrainsMono Nerd Font
+font-size = 14
 
 background-opacity = 0.85
 background-blur-radius = 20
