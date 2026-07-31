@@ -53,19 +53,40 @@ fi
 
 # git config is per-machine (identity, and URL rewrites that exist only because a
 # given work repo cannot be cloned over SSH here), so the repo ships none of it.
-if [ -f "$HOME/.gitconfig" ]; then
+# Written key by key rather than as one template: a ~/.gitconfig that another tool
+# already created still has to end up with the URL rewrite, which is the one
+# setting here that is painful to rediscover.
+GITCONFIG="$HOME/.gitconfig"
+
+# A machine bootstrapped while this repo still had a git package has ~/.gitconfig
+# symlinked into the checkout. Left alone, the writes below would follow the now
+# dangling link and recreate git/.gitconfig inside a public repo.
+if [ -L "$GITCONFIG" ]; then
+  log "Removing the stale ~/.gitconfig symlink -> $(readlink "$GITCONFIG")"
+  rm "$GITCONFIG"
+fi
+
+# Same vintage: the identity used to live in ~/.gitconfig.local, pulled in by an
+# [include] that no longer exists.
+if [ ! -f "$GITCONFIG" ] && [ -f "$HOME/.gitconfig.local" ]; then
+  log "Migrating ~/.gitconfig.local into ~/.gitconfig"
+  cp "$HOME/.gitconfig.local" "$GITCONFIG"
+fi
+
+if [ -f "$GITCONFIG" ]; then
   skip "~/.gitconfig exists"
 else
   log "Creating ~/.gitconfig"
-  cat >"$HOME/.gitconfig" <<'EOF'
-# Machine-local. Not tracked by the dotfiles repo.
-[user]
-	name = your-name
-	email = you@example.com
-[alias]
-	co = checkout
-EOF
+  printf '# Machine-local. Not tracked by the dotfiles repo.\n' >"$GITCONFIG"
 fi
+
+git config --file "$GITCONFIG" alias.co checkout
+git config --file "$GITCONFIG" url."https://github.com/".insteadOf "git@github.com:"
+
+# Deliberately no placeholder identity: git refusing to commit until you set one
+# beats silently attributing commits to your-name <you@example.com>.
+git config --file "$GITCONFIG" --get user.email >/dev/null ||
+  WARNINGS+=("set user.name and user.email in $GITCONFIG")
 
 # --------------------------------------------------------------------- stow --
 # stow refuses to overwrite regular files, so move anything pre-existing aside.
