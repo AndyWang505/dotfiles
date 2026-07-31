@@ -69,4 +69,4 @@ Untracked on purpose, because this repo is public:
 | `~/.gitconfig` | `user.name` / `user.email`, and URL rewrites that only exist because a given work repo cannot be cloned over SSH here |
 | `~/.zshrc.local` | credentials and work-only environment (sourced at the end of `.zshrc`) |
 | `~/.config/fish/config-local.fish` | the same escape hatch for fish |
-| `nvim/.../lua/config/local.lua`, `nvim/.../lua/plugins/local/` | editor config tied to one employer's repos (Nx keymaps, oxlint formatter, i18n plugin) |
+| `nvim/.../lua/config/local.lua`, `nvim/.../lua/plugins/local/` | editor config tied to one employer's repos (Nx keymaps, oxlint formatter) |

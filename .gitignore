@@ -14,7 +14,8 @@ fish/.config/fish/conf.d/nvm.fish
 fish/.config/fish/fish_variables*
 fish/.config/fish/config-local.fish
 
-# Config that only makes sense inside one employer's repos.
+# Config that only makes sense inside one employer's repos. init.lua stays, so
+# `{ import = "plugins.local" }` still finds a module on a machine with none.
 nvim/.config/nvim/lua/config/local.lua
 nvim/.config/nvim/lua/plugins/local/*
-!nvim/.config/nvim/lua/plugins/local/.gitkeep
+!nvim/.config/nvim/lua/plugins/local/init.lua
