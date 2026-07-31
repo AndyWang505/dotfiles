@@ -8,7 +8,7 @@ if [ "$(uname)" != Darwin ]; then
 fi
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(zsh git nvim tmux ghostty fish)
+PACKAGES=(zsh nvim tmux ghostty fish)
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 skip() { printf '    %s\n' "$*"; }
@@ -51,21 +51,46 @@ else
 EOF
 fi
 
-if [ -f "$HOME/.gitconfig.local" ]; then
-  skip "~/.gitconfig.local exists"
-else
-  log "Creating ~/.gitconfig.local"
-  cat >"$HOME/.gitconfig.local" <<'EOF'
-# Machine-local git identity. Not tracked by the dotfiles repo.
-[user]
-	name = your-name
-	email = you@example.com
-EOF
+# git config is per-machine (identity, and URL rewrites that exist only because a
+# given work repo cannot be cloned over SSH here), so the repo ships none of it.
+# Written key by key rather than as one template: a ~/.gitconfig that another tool
+# already created still has to end up with the URL rewrite, which is the one
+# setting here that is painful to rediscover.
+GITCONFIG="$HOME/.gitconfig"
+
+# A machine bootstrapped while this repo still had a git package has ~/.gitconfig
+# symlinked into the checkout. Left alone, the writes below would follow the now
+# dangling link and recreate git/.gitconfig inside a public repo.
+if [ -L "$GITCONFIG" ]; then
+  log "Removing the stale ~/.gitconfig symlink -> $(readlink "$GITCONFIG")"
+  rm "$GITCONFIG"
 fi
+
+# Same vintage: the identity used to live in ~/.gitconfig.local, pulled in by an
+# [include] that no longer exists.
+if [ ! -f "$GITCONFIG" ] && [ -f "$HOME/.gitconfig.local" ]; then
+  log "Migrating ~/.gitconfig.local into ~/.gitconfig"
+  cp "$HOME/.gitconfig.local" "$GITCONFIG"
+fi
+
+if [ -f "$GITCONFIG" ]; then
+  skip "~/.gitconfig exists"
+else
+  log "Creating ~/.gitconfig"
+  printf '# Machine-local. Not tracked by the dotfiles repo.\n' >"$GITCONFIG"
+fi
+
+git config --file "$GITCONFIG" alias.co checkout
+git config --file "$GITCONFIG" url."https://github.com/".insteadOf "git@github.com:"
+
+# Deliberately no placeholder identity: git refusing to commit until you set one
+# beats silently attributing commits to your-name <you@example.com>.
+git config --file "$GITCONFIG" --get user.email >/dev/null ||
+  WARNINGS+=("set user.name and user.email in $GITCONFIG")
 
 # --------------------------------------------------------------------- stow --
 # stow refuses to overwrite regular files, so move anything pre-existing aside.
-for file in .zshrc .zprofile .gitconfig; do
+for file in .zshrc .zprofile; do
   target="$HOME/$file"
   if [ -f "$target" ] && [ ! -L "$target" ]; then
     log "Backing up $target -> $target.pre-dotfiles"
@@ -86,18 +111,6 @@ fi
 
 log "Stowing packages: ${PACKAGES[*]}"
 stow --dir="$DOTFILES_DIR" --target="$HOME" --restow "${PACKAGES[@]}"
-
-# --------------------------------------------------------------- oh-my-zsh ---
-# After stow on purpose: KEEP_ZSHRC only takes effect when ~/.zshrc already
-# exists, so running this first would have the installer drop its own template
-# there and leave a pointless .zshrc.pre-dotfiles behind.
-if [ -d "$HOME/.oh-my-zsh" ]; then
-  skip "oh-my-zsh already installed"
-else
-  log "Installing oh-my-zsh"
-  RUNZSH=no KEEP_ZSHRC=yes sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
 
 # ---------------------------------------------------------------------- tmux --
 # TPM has to exist before `prefix + I` does anything.
@@ -123,6 +136,19 @@ fi
 
 log "Installing fish plugins from fish_plugins"
 try fish -c 'fisher update'
+
+# Written after stow so the stowed config.fish is already in place to source it.
+FISH_LOCAL="$HOME/.config/fish/config-local.fish"
+if [ -f "$FISH_LOCAL" ]; then
+  skip "$FISH_LOCAL exists"
+else
+  log "Creating $FISH_LOCAL"
+  cat >"$FISH_LOCAL" <<'EOF'
+# Machine-local fish config. Not tracked by the dotfiles repo.
+# set -gx JIRA_USER_EMAIL you@example.com
+# set -gx JIRA_API_TOKEN (security find-generic-password -a $USER -s jira_api_token -w)
+EOF
+fi
 
 # ---------------------------------------------------------------------- node --
 # The Brewfile installs nvm, which ships no Node version of its own. Without one
@@ -166,8 +192,9 @@ fi
 cat <<EOF
 
 Left for you to do by hand:
-  - Put your real values in ~/.zshrc.local and ~/.gitconfig.local
-  - To make fish the login shell:
+  - Put your real values in ~/.gitconfig, ~/.zshrc.local and
+    ~/.config/fish/config-local.fish
+  - ghostty runs fish already. Only chsh if you also want it as the login shell:
       echo \$(brew --prefix)/bin/fish | sudo tee -a /etc/shells
       chsh -s \$(brew --prefix)/bin/fish
 EOF

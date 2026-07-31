@@ -1,8 +1,13 @@
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
-plugins=(git)
+# fish is the interactive shell; zsh only has to serve scripts, tooling that
+# spawns $SHELL, and the odd fallback session — so no prompt or plugin setup.
 
-source $ZSH/oh-my-zsh.sh
+# /etc/zshrc sets SAVEHIST=1000, which would trim the existing history the first
+# time a fallback session exits.
+HISTSIZE=50000
+SAVEHIST=50000
+
+# oh-my-zsh used to do this; without it a fallback session has no completion.
+autoload -Uz compinit && compinit
 
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -18,10 +23,8 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# TERM is left to the terminal: ghostty's xterm-ghostty terminfo declares Tc,
-# which forcing xterm-256color would throw away. Remote hosts get the terminfo
-# through ghostty's ssh-terminfo shell integration.
-export COLORTERM="truecolor"
+# TERM and COLORTERM are left to the terminal: ghostty sets both, and forcing
+# xterm-256color would throw away the Tc its own terminfo declares.
 
 # Credentials and work-only settings live here, outside the repo
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
