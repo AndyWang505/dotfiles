@@ -7,11 +7,12 @@ Personal Neovim config built on top of [LazyVim](https://github.com/LazyVim/Lazy
 - Font: JetBrainsMono Nerd Font
 - Colorscheme: tokyonight (with habamax fallback)
 - Format-on-save disabled (`vim.g.autoformat = false`) — format explicitly via `<leader>cf`
+- Picker: fzf-lua (replaces snacks.picker; snacks explorer is kept as the file tree)
 - Snacks explorer shows hidden files by default
 
 ## LazyVim extras enabled
 
-`formatting.prettier`, `lang.json`, `lang.markdown`, `lang.typescript`, `lang.yaml`, `linting.eslint`, `test.core`
+`editor.fzf`, `formatting.prettier`, `lang.json`, `lang.markdown`, `lang.typescript`, `lang.yaml`, `linting.eslint`, `test.core`
 
 ## Custom plugins
 
