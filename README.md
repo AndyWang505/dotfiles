@@ -141,3 +141,7 @@ to work live in untracked files instead:
 | `~/.config/fish/config-local.fish` | Credentials and env vars |
 | `nvim/.../lua/plugins/local/` | Editor config only some repos need |
 | `~/.claude/settings.json` | Claude Code settings; holds work context. `install.sh` only adds the tmux hooks to it |
+
+## License
+
+[MIT](LICENSE)
